@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import logo from "@/assets/images/logo-white.png";
 import profileDefault from "@/assets/images/profile.png";
-import { FaGoogle } from "react-icons/fa";
+import { FaGoogle, FaUser, FaSignOutAlt, FaBookmark } from "react-icons/fa";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 import UnreadMessageCount from "./UnreadMessageCount";
 
@@ -65,7 +65,6 @@ const Navbar = () => {
             {/* <!-- Лого --> */}
             <Link className="flex flex-shrink-0 items-center" href="/">
               <Image className="h-10 w-auto" src={logo} alt="HomeHaven" />
-
               <span className="hidden md:block text-white text-2xl font-bold ml-2">
                 HomeHaven
               </span>
@@ -184,7 +183,7 @@ const Navbar = () => {
                   >
                     <Link
                       href="/profile"
-                      className="block px-4 py-2 text-sm text-gray-700"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700"
                       role="menuitem"
                       tabIndex="-1"
                       id="user-menu-item-0"
@@ -192,11 +191,12 @@ const Navbar = () => {
                         setIsProfileMenuOpen(false);
                       }}
                     >
+                      <FaUser className="mr-2" />
                       Профиль
                     </Link>
                     <Link
                       href="/properties/saved"
-                      className="block px-4 py-2 text-sm text-gray-700"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700"
                       role="menuitem"
                       tabIndex="-1"
                       id="user-menu-item-2"
@@ -204,6 +204,7 @@ const Navbar = () => {
                         setIsProfileMenuOpen(false);
                       }}
                     >
+                      <FaBookmark className="mr-2" />
                       Закладки
                     </Link>
                     <button
@@ -211,11 +212,12 @@ const Navbar = () => {
                         setIsProfileMenuOpen(false);
                         signOut();
                       }}
-                      className="block px-4 py-2 text-sm text-gray-700"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left"
                       role="menuitem"
                       tabIndex="-1"
                       id="user-menu-item-2"
                     >
+                      <FaSignOutAlt className="mr-2" />
                       Выйти
                     </button>
                   </div>
@@ -236,7 +238,7 @@ const Navbar = () => {
                 pathname === "/" ? "bg-black" : ""
               } text-white block rounded-md px-3 py-2 text-base font-medium`}
             >
-              Home
+              Главная
             </Link>
             <Link
               href="/properties"
@@ -244,7 +246,7 @@ const Navbar = () => {
                 pathname === "/properties" ? "bg-black" : ""
               } text-white block rounded-md px-3 py-2 text-base font-medium`}
             >
-              Properties
+              Недвижимость
             </Link>
             {session && (
               <Link
@@ -253,7 +255,7 @@ const Navbar = () => {
                   pathname === "/properties/add" ? "bg-black" : ""
                 } text-white block rounded-md px-3 py-2 text-base font-medium`}
               >
-                Add Property
+                Добавить
               </Link>
             )}
 
@@ -263,9 +265,10 @@ const Navbar = () => {
                 <button
                   onClick={() => signIn(provider.id)}
                   key={index}
-                  className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
+                  className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 w-full"
                 >
-                  <span>Login or Register</span>
+                  <FaGoogle className="mr-2" />
+                  <span>Вход / Регистрация</span>
                 </button>
               ))}
           </div>

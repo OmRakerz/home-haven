@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import PropertyCard from "@/components/PropertyCard";
 import Spinner from "@/components/Spinner";
 import { toast } from "react-toastify";
+import { FaBookmark } from "react-icons/fa";
 
 const SavedPropertiesPage = () => {
   const [properties, setProperties] = useState([]);
@@ -35,7 +36,10 @@ const SavedPropertiesPage = () => {
     <Spinner loading={loading} />
   ) : (
     <section className="px-4 py-6">
-      <h1 className="text-2xl mb-4">Сохранённые объявления</h1>
+      <h1 className="text-3xl xl:text-4xl mb-4 text-center font-bold underline">
+        Сохранённые объявления
+        <FaBookmark className="ml-2 inline-block text-3xl xl:text-4xl pb-1 xl:pb-2" />
+      </h1>
       <div className="container-xl lg:container m-auto px-4 py-6">
         {properties.length === 0 ? (
           <p>Нет сохраненных объектов недвижимости</p>

@@ -12,6 +12,42 @@ const PropertyContactForm = ({ property }) => {
   const [phone, setPhone] = useState("");
   const [wasSubmitted, setWasSubmitted] = useState(false);
 
+  const formatPhoneNumber = (value) => {
+    if (!value) return value;
+
+    // Удаляем все нецифровые символы
+    const phoneNumber = value.replace(/[^\d]/g, "");
+    const phoneNumberLength = phoneNumber.length;
+
+    // Форматируем номер в зависимости от длины ввода
+    if (phoneNumberLength < 1) return value;
+    if (phoneNumberLength <= 1) return `+${phoneNumber}`;
+    if (phoneNumberLength <= 4)
+      return `+${phoneNumber.slice(0, 1)} (${phoneNumber.slice(1)}`;
+    if (phoneNumberLength <= 7)
+      return `+${phoneNumber.slice(0, 1)} (${phoneNumber.slice(
+        1,
+        4
+      )}) ${phoneNumber.slice(4)}`;
+    if (phoneNumberLength <= 9)
+      return `+${phoneNumber.slice(0, 1)} (${phoneNumber.slice(
+        1,
+        4
+      )}) ${phoneNumber.slice(4, 7)}-${phoneNumber.slice(7)}`;
+    return `+${phoneNumber.slice(0, 1)} (${phoneNumber.slice(
+      1,
+      4
+    )}) ${phoneNumber.slice(4, 7)}-${phoneNumber.slice(
+      7,
+      9
+    )}-${phoneNumber.slice(9, 11)}`;
+  };
+
+  const handlePhoneChange = (e) => {
+    const formattedPhoneNumber = formatPhoneNumber(e.target.value);
+    setPhone(formattedPhoneNumber);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -28,7 +64,7 @@ const PropertyContactForm = ({ property }) => {
       const res = await fetch("/api/messages", {
         method: "POST",
         headers: {
-          "Content-Type": "aplication/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
@@ -106,10 +142,11 @@ const PropertyContactForm = ({ property }) => {
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="phone"
-              type="text"
-              placeholder="Введите ваш номер телефона"
+              type="tel"
+              placeholder="+7 (___) ___-__-__"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={handlePhoneChange}
+              maxLength="18"
             />
           </div>
           <div className="mb-4">

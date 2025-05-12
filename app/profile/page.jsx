@@ -35,8 +35,7 @@ const ProfilePage = () => {
         setLoading(false);
       }
     };
-
-    // Извлекаем свойства (properties) пользователя, когда сессия доступна
+    // Извлекаем недвижимость (properties) пользователя, когда сессия доступна
     if (session?.user?.id) {
       fetchUserProperties(session.user.id);
     }
@@ -55,7 +54,7 @@ const ProfilePage = () => {
       });
 
       if (res.status === 200) {
-        // Удалим свойство из состояния (state)
+        // Удалим недвижимость из состояния (state)
         const updatedProperties = properties.filter(
           (property) => property._id !== propertyId
         );
@@ -74,14 +73,14 @@ const ProfilePage = () => {
 
   return (
     <section className="bg-blue-50">
-      <div className="container m-auto py-24">
-        <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
-          <h1 className="text-3xl font-bold mb-4">Ваш профиль</h1>
+      <div className="max-w-5xl mx-auto py-24">
+        <div className="bg-white px-6 py-8 mb-4 shadow-xl rounded-xl m-4 md:m-0">
           <div className="flex flex-col md:flex-row">
-            <div className="md:w-1/4 mx-20 mt-10">
+            <div className="md:w-1/4 md:ml-8 md:mr-28 mb-8 md:mb-0">
+              <h1 className="text-3xl font-bold mb-4 underline">Ваш профиль</h1>
               <div className="mb-4">
                 <Image
-                  className="h-32 w-32 md:h-48 md:w-48 rounded-full mx-auto md:mx-0"
+                  className="h-32 w-32 rounded-full mx-auto md:mx-0"
                   src={profileImage || profileDefault}
                   width={200}
                   height={200}
@@ -97,7 +96,9 @@ const ProfilePage = () => {
             </div>
 
             <div className="md:w-3/4 md:pl-4">
-              <h2 className="text-xl font-semibold mb-4">Ваши объявления</h2>
+              <h2 className="text-3xl font-bold mb-4 underline">
+                Ваши объявления
+              </h2>
               {!loading && properties.length === 0 && (
                 <p>У вас нет объявлений</p>
               )}

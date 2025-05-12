@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import { propertyTypeTranslations } from "@/utils/propertyTypes";
+import { FaImages } from "react-icons/fa6";
 
 const PropertyAddForm = () => {
   const [mounted, setMounted] = useState(false);
+  const [imagesSelectedLength, setImagesSelectedLength] = useState(0);
   const [fields, setFields] = useState({
     type: "",
     name: "",
@@ -38,28 +40,65 @@ const PropertyAddForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Проверяем, вложенное ли свойство
-    if (name.includes(".")) {
-      const [outerKey, innerKey] = name.split(".");
+    // Обработка маски для телефона
+    if (name === "seller_info.phone") {
+      const formattedPhone = formatPhoneNumber(value);
+      updateField(name, formattedPhone);
+      return;
+    }
 
-      setFields((prevFields) => ({
-        ...prevFields,
-        [outerKey]: {
-          ...prevFields[outerKey],
-          [innerKey]: value,
-        },
-      }));
+    if (name.includes(".")) {
+      updateField(name, value);
     } else {
-      // Не вложен
       setFields((prevFields) => ({
         ...prevFields,
         [name]: value,
       }));
     }
   };
+
+  const updateField = (name, value) => {
+    const [outerKey, innerKey] = name.split(".");
+    setFields((prevFields) => ({
+      ...prevFields,
+      [outerKey]: {
+        ...prevFields[outerKey],
+        [innerKey]: value,
+      },
+    }));
+  };
+
+  const formatPhoneNumber = (value) => {
+    if (!value) return value;
+
+    const phoneNumber = value.replace(/[^\d]/g, "");
+    const phoneNumberLength = phoneNumber.length;
+
+    if (phoneNumberLength < 1) return value;
+    if (phoneNumberLength <= 1) return `+${phoneNumber}`;
+    if (phoneNumberLength <= 4)
+      return `+${phoneNumber.slice(0, 1)} (${phoneNumber.slice(1)}`;
+    if (phoneNumberLength <= 7)
+      return `+${phoneNumber.slice(0, 1)} (${phoneNumber.slice(
+        1,
+        4
+      )}) ${phoneNumber.slice(4)}`;
+    if (phoneNumberLength <= 9)
+      return `+${phoneNumber.slice(0, 1)} (${phoneNumber.slice(
+        1,
+        4
+      )}) ${phoneNumber.slice(4, 7)}-${phoneNumber.slice(7)}`;
+    return `+${phoneNumber.slice(0, 1)} (${phoneNumber.slice(
+      1,
+      4
+    )}) ${phoneNumber.slice(4, 7)}-${phoneNumber.slice(
+      7,
+      9
+    )}-${phoneNumber.slice(9, 11)}`;
+  };
+
   const handleAmenitiesChange = (e) => {
     const { value, checked } = e.target;
-
     // Клонируем текущий массив (array) удобств (amenities)
     const updateAmenites = [...fields.amenities];
 
@@ -69,7 +108,6 @@ const PropertyAddForm = () => {
     } else {
       // Удалим значение из массива
       const index = updateAmenites.indexOf(value);
-
       if (index !== -1) {
         updateAmenites.splice(index, 1);
       }
@@ -84,10 +122,10 @@ const PropertyAddForm = () => {
 
   const handleImageChange = (e) => {
     const { files } = e.target;
+    setImagesSelectedLength(files.length);
 
     // Клонируем массив изображений
     const updateImages = [...fields.images];
-
     // Добавим новые файлы в массив
     for (const file of files) {
       updateImages.push(file);
@@ -123,15 +161,8 @@ const PropertyAddForm = () => {
             value={fields.type}
             onChange={handleChange}
           >
-            {/* <option value="Apartment">Апартаменты</option>
-            <option value="Condo">Квартира</option>
-            <option value="House">Дом</option>
-            <option value="Cabin Or Cottage">Дача/Коттедж</option>
-            <option value="Room">Комната</option>
-            <option value="Studio">Студия</option>
-            <option value="Other">Другое</option> */}
             {Object.entries(propertyTypeTranslations)
-              .filter(([value]) => value !== "All") // Исключаем "Все" для форм добавления/редактирования
+              .filter(([value]) => value !== "All")
               .map(([value, label]) => (
                 <option key={value} value={value}>
                   {label}
@@ -139,6 +170,7 @@ const PropertyAddForm = () => {
               ))}
           </select>
         </div>
+
         <div className="mb-4">
           <label className="block text-gray-700 font-bold mb-2">
             Название объекта
@@ -216,7 +248,7 @@ const PropertyAddForm = () => {
         </div>
 
         <div className="mb-4 flex flex-wrap">
-          <div className="w-full sm:w-1/3 pr-2">
+          <div className="w-full sm:w-1/3 sm:pr-2 mb-2 sm:mb-0">
             <label
               htmlFor="beds"
               className="block text-gray-700 font-bold mb-2"
@@ -233,7 +265,7 @@ const PropertyAddForm = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="w-full sm:w-1/3 px-2">
+          <div className="w-full sm:w-1/3 sm:px-2 mb-2 sm:mb-0">
             <label
               htmlFor="baths"
               className="block text-gray-700 font-bold mb-2"
@@ -250,7 +282,7 @@ const PropertyAddForm = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="w-full sm:w-1/3 pl-2">
+          <div className="w-full sm:w-1/3 sm:pl-2">
             <label
               htmlFor="square_meters"
               className="block text-gray-700 font-bold mb-2"
@@ -552,24 +584,36 @@ const PropertyAddForm = () => {
             id="seller_phone"
             name="seller_info.phone"
             className="border rounded w-full py-2 px-3"
-            placeholder="+7 (978) 789-35-75"
+            placeholder="+7 (___) ___-__-__"
             value={fields.seller_info.phone}
             onChange={handleChange}
+            pattern="\+7\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}"
           />
         </div>
 
         <div className="mb-4">
           <label
             htmlFor="images"
-            className="block text-gray-700 font-bold mb-2"
+            className="block text-gray-700 font-bold mb-2 border rounded w-full sm:w-fit py-2 px-3 bg-blue-50 hover:bg-blue-100 cursor-pointer"
           >
-            Изображения (выберите до 4 изображений)
+            <FaImages className="inline-block mx-2 text-xl" />
+            Изображения{" "}
+            <span className="text-gray-400 ml-2 text-xs">
+              (до 4 изображений)
+            </span>
           </label>
+          {imagesSelectedLength !== 0 && (
+            <span className="block text-black ml-2 text-xs">
+              {imagesSelectedLength === 1
+                ? `Выбрано ${imagesSelectedLength} изображение`
+                : `Выбрано ${imagesSelectedLength} изображения`}
+            </span>
+          )}
           <input
             type="file"
             id="images"
             name="images"
-            className="border rounded w-full py-2 px-3"
+            className="hidden"
             accept="image/*"
             multiple
             onChange={handleImageChange}

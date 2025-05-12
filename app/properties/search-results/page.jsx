@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { FaArrowAltCircleLeft } from "react-icons/fa";
+import { FaMagnifyingGlassLocation } from "react-icons/fa6";
 import PropertyCard from "@/components/PropertyCard";
 import Spinner from "@/components/Spinner";
 import PropertySearchForm from "@/components/PropertySearchForm";
@@ -50,15 +51,17 @@ const SearchResultsPage = () => {
         <Spinner loading={loading} />
       ) : (
         <section className="px-4 py-6">
-          <div className="container-xl lg:container m-auto px-4 py-6">
+          <div className="container-xl lg:container m-auto px-4 py-0 xl:py-6">
             <Link
               href="/properties"
               className="flex items-center text-blue-500 hover:underline mb-3"
             >
-              <FaArrowAltCircleLeft className="mr-2 mb-1" /> Назад к
-              недвижимости
+              <FaArrowAltCircleLeft className="mr-2" /> Назад к недвижимости
             </Link>
-            <h1 className="text-2xl mb-4">Результаты поиска</h1>
+            <h1 className="text-3xl xl:text-4xl mb-6 text-center font-bold underline">
+              Результаты поиска
+              <FaMagnifyingGlassLocation className="ml-2 inline-block text-3xl xl:text-4xl pb-1 xl:pb-2" />
+            </h1>
             {properties.length === 0 ? (
               <p>Ничего не найдено</p>
             ) : (
