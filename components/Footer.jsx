@@ -1,5 +1,7 @@
 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
+import { FaGithub } from "react-icons/fa6";
+import Link from "next/link";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -7,8 +9,20 @@ const Footer = () => {
   return (
     <footer className="bg-gray-200 py-4 mt-24">
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-4">
-        <div className="mb-4 md:mb-0">
+        <Link href="/" className="mb-4 md:mb-0">
           <Image src={logo} alt="Logo" className="h-8 w-auto" />
+        </Link>
+
+        <div className="mb-4 md:mb-0">
+          <a
+            href="https://github.com/OmRakerz"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center text-gray-500 hover:text-gray-700"
+          >
+            <FaGithub className="mr-2 text-lg" />
+            Three V's
+          </a>
         </div>
 
         <div>
