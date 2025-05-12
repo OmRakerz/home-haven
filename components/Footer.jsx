@@ -13,12 +13,14 @@ const Footer = () => {
           <Image src={logo} alt="Logo" className="h-8 w-auto" />
         </Link>
 
-        <div className="mb-4 md:mb-0">
+        <div className="md:pl-64 mb-4 md:mb-0">
+          {" "}
+          {/* Добавлен отступ слева для смещения вправо */}
           <a
             href="https://github.com/OmRakerz"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center text-gray-500 hover:text-gray-700"
+            className="flex items-center text-gray-500 hover:text-gray-700"
           >
             <FaGithub className="mr-2 text-lg" />
             Three V's
