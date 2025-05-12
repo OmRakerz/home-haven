@@ -18,9 +18,9 @@ const MainLayout = ({ children }) => {
     <GlobalProvider>
       <AuthProvider>
         <html lang="ru">
-          <body>
+          <body className="flex flex-col min-h-screen">
             <Navbar />
-            <main>{children}</main>
+            <main className="flex-grow">{children}</main>
             <Footer />
             <ToastContainer />
           </body>

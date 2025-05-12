@@ -35,6 +35,7 @@ const ProfilePage = () => {
         setLoading(false);
       }
     };
+
     // Извлекаем недвижимость (properties) пользователя, когда сессия доступна
     if (session?.user?.id) {
       fetchUserProperties(session.user.id);
@@ -72,7 +73,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <section className="bg-blue-50">
+    <section className="bg-blue-50 flex-1">
       <div className="max-w-5xl mx-auto py-24">
         <div className="bg-white px-6 py-8 mb-4 shadow-xl rounded-xl m-4 md:m-0">
           <div className="flex flex-col md:flex-row">

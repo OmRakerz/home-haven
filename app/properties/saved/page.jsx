@@ -35,7 +35,7 @@ const SavedPropertiesPage = () => {
   return loading ? (
     <Spinner loading={loading} />
   ) : (
-    <section className="px-4 py-6">
+    <section className="px-4 py-6 flex-1">
       <h1 className="text-3xl xl:text-4xl mb-4 text-center font-bold underline">
         Сохранённые объявления
         <FaBookmark className="ml-2 inline-block text-3xl xl:text-4xl pb-1 xl:pb-2" />
