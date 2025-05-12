@@ -7,12 +7,15 @@ import {
   FaMapMarker,
 } from "react-icons/fa";
 import PropertyMap from "@/components/PropertyMap";
+import { propertyTypeTranslations } from "@/utils/propertyTypes";
 
 const PropertyDetails = ({ property }) => {
   return (
     <main>
       <div className="bg-white p-6 rounded-lg shadow-md text-center md:text-left">
-        <div className="text-gray-500 mb-4">{property.type}</div>
+        <div className="text-gray-500 mb-4">
+          {propertyTypeTranslations[property.type] || property.type}
+        </div>
         <h1 className="text-3xl font-bold mb-4">{property.name}</h1>
         <div className="text-gray-500 mb-4 flex align-middle justify-center md:justify-start">
           <FaMapMarker className="text-lg text-orange-700 mr-2" />

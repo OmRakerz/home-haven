@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { propertyTypeTranslations } from "@/utils/propertyTypes";
 
 const PropertySearchForm = () => {
   const [location, setLocation] = useState("");
@@ -50,7 +51,7 @@ const PropertySearchForm = () => {
           value={propertyType}
           onChange={(e) => setPropertyType(e.target.value)}
         >
-          <option value="All">Все</option>
+          {/* <option value="All">Все</option>
           <option value="Apartment">Апартаменты</option>
           <option value="Studio">Студия</option>
           <option value="Condo">Квартира</option>
@@ -58,7 +59,12 @@ const PropertySearchForm = () => {
           <option value="Cabin Or Cottage">Дача или коттедж</option>
           <option value="Loft">Лофт</option>
           <option value="Room">Комната</option>
-          <option value="Other">Другое</option>
+          <option value="Other">Другое</option> */}
+          {Object.entries(propertyTypeTranslations).map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
         </select>
       </div>
       <button

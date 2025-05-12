@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { propertyTypeTranslations } from "@/utils/propertyTypes";
 
 const PropertyAddForm = () => {
   const [mounted, setMounted] = useState(false);
@@ -122,13 +123,20 @@ const PropertyAddForm = () => {
             value={fields.type}
             onChange={handleChange}
           >
-            <option value="Apartment">Апартаменты</option>
+            {/* <option value="Apartment">Апартаменты</option>
             <option value="Condo">Квартира</option>
             <option value="House">Дом</option>
             <option value="Cabin Or Cottage">Дача/Коттедж</option>
             <option value="Room">Комната</option>
             <option value="Studio">Студия</option>
-            <option value="Other">Другое</option>
+            <option value="Other">Другое</option> */}
+            {Object.entries(propertyTypeTranslations)
+              .filter(([value]) => value !== "All") // Исключаем "Все" для форм добавления/редактирования
+              .map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
           </select>
         </div>
         <div className="mb-4">

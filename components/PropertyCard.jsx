@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { propertyTypeTranslations } from "@/utils/propertyTypes";
+
 import {
   FaBed,
   FaBath,
@@ -33,7 +35,9 @@ const PropertyCard = ({ property }) => {
       />
       <div className="p-4">
         <div className="text-left md:text-center lg:text-left mb-6">
-          <div className="text-gray-600">{property.type}</div>
+          <div className="text-gray-600">
+            {propertyTypeTranslations[property.type] || property.type}
+          </div>
           <h3 className="text-xl font-bold">{property.name}</h3>
         </div>
         <h3 className="absolute top-[10px] right-[10px] bg-white px-4 py-2 rounded-lg text-blue-500 font-bold text-right md:text-center lg:text-right">

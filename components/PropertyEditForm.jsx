@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { fetchProperty } from "@/utils/requests";
+import { propertyTypeTranslations } from "@/utils/propertyTypes";
 
 const PropertyEditForm = () => {
   const { id } = useParams();
@@ -157,13 +158,20 @@ const PropertyEditForm = () => {
             value={fields.type}
             onChange={handleChange}
           >
-            <option value="Apartment">Апартаменты</option>
+            {/* <option value="Apartment">Апартаменты</option>
             <option value="Condo">Квартира</option>
             <option value="House">Дом</option>
             <option value="Cabin Or Cottage">Дача или коттедж</option>
             <option value="Room">Комната</option>
             <option value="Studio">Студия</option>
-            <option value="Other">Другое</option>
+            <option value="Other">Другое</option> */}
+            {Object.entries(propertyTypeTranslations)
+              .filter(([value]) => value !== "All") // Исключаем "Все" для форм добавления/редактирования
+              .map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
           </select>
         </div>
         <div className="mb-4">
