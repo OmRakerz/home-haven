@@ -13,7 +13,7 @@ export const GET = async () => {
     const sessionUser = await getSessionUser();
 
     if (!sessionUser || !sessionUser.userId) {
-      return new Response("Необходима авторизация", { status: 401 });
+      return new Response("User ID is required", { status: 401 });
     }
 
     const { userId } = sessionUser;
@@ -40,7 +40,7 @@ export const POST = async (request) => {
     const sessionUser = await getSessionUser();
 
     if (!sessionUser || !sessionUser.userId) {
-      return new Response("Необходима авторизация", { status: 401 });
+      return new Response("User ID is required", { status: 401 });
     }
 
     const { userId } = sessionUser;
@@ -63,6 +63,18 @@ export const POST = async (request) => {
       user.bookmarks.push(propertyId);
       message = "Закладка успешно добавлена";
       isBookmarked = true;
+
+      // Проверяем, достигло ли свойство 3+ закладок от разных пользователей
+      const bookmarkCount = await User.countDocuments({
+        bookmarks: propertyId,
+      });
+
+      if (bookmarkCount >= 3) {
+        await Property.updateOne(
+          { _id: propertyId },
+          { $set: { is_featured: true } }
+        );
+      }
     }
 
     await user.save();
