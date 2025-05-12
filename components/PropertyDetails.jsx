@@ -5,12 +5,20 @@ import {
   FaTimes,
   FaCheck,
   FaMapMarker,
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
+import { useState } from "react";
 import PropertyMap from "@/components/PropertyMap";
 import { propertyTypeTranslations } from "@/utils/propertyTypes";
 import { declension } from "@/utils/declension";
 
 const PropertyDetails = ({ property }) => {
+  const [isContactsExpanded, setIsContactsExpanded] = useState(false);
+
   // Функция для форматирования описания с сохранением абзацев
   const formatDescription = (description) => {
     if (!description) return null;
@@ -103,7 +111,6 @@ const PropertyDetails = ({ property }) => {
 
       <div className="bg-white p-6 rounded-lg shadow-md mt-6">
         <h3 className="text-lg font-bold mb-6">Удобства</h3>
-
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 list-none space-y-2">
           {property.amenities.map((amenity, index) => (
             <li key={index}>
@@ -111,6 +118,55 @@ const PropertyDetails = ({ property }) => {
             </li>
           ))}
         </ul>
+      </div>
+
+      {/* Новый блок контактов владельца */}
+      <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+        <button
+          className="flex items-center justify-between w-full text-left"
+          onClick={() => setIsContactsExpanded(!isContactsExpanded)}
+        >
+          <h3 className="text-lg font-bold">Контакты владельца</h3>
+          {isContactsExpanded ? (
+            <FaChevronUp className="text-gray-500" />
+          ) : (
+            <FaChevronDown className="text-gray-500" />
+          )}
+        </button>
+
+        {isContactsExpanded && (
+          <div className="mt-4 space-y-4">
+            <div className="flex items-center">
+              <FaUser className="text-blue-500 mr-3 text-lg" />
+              <div>
+                <p className="text-gray-500 text-sm">Имя</p>
+                <p className="font-medium">
+                  {property.seller_info?.name || "Не указано"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center">
+              <FaEnvelope className="text-blue-500 mr-3 text-lg" />
+              <div>
+                <p className="text-gray-500 text-sm">Email</p>
+                <p className="font-medium">
+                  {property.seller_info?.email || "Не указано"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center">
+              <FaPhone className="text-blue-500 mr-3 text-lg" />
+              <div>
+                <p className="text-gray-500 text-sm">Телефон</p>
+                <p className="font-medium">
+                  {property.seller_info?.phone || "Не указано"}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md mt-6">
