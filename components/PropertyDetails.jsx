@@ -11,6 +11,17 @@ import { propertyTypeTranslations } from "@/utils/propertyTypes";
 import { declension } from "@/utils/declension";
 
 const PropertyDetails = ({ property }) => {
+  // Функция для форматирования описания с сохранением абзацев
+  const formatDescription = (description) => {
+    if (!description) return null;
+
+    return description.split("\n").map((paragraph, index) => (
+      <p key={index} className="mb-4 last:mb-0 text-left">
+        {paragraph}
+      </p>
+    ));
+  };
+
   return (
     <main>
       <div className="bg-white p-6 rounded-lg shadow-md text-center md:text-left">
@@ -85,7 +96,9 @@ const PropertyDetails = ({ property }) => {
             <span className="hidden sm:inline">м²</span>
           </p>
         </div>
-        <p className="text-gray-500 mb-4 text-center">{property.description}</p>
+        <div className="text-gray-500 mb-4 whitespace-pre-line">
+          {formatDescription(property.description)}
+        </div>
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md mt-6">
@@ -99,7 +112,7 @@ const PropertyDetails = ({ property }) => {
           ))}
         </ul>
       </div>
-      {/* Добавление карты Яндекса */}
+
       <div className="bg-white p-6 rounded-lg shadow-md mt-6">
         <PropertyMap property={property} />
       </div>
