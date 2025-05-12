@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import PropertyMap from "@/components/PropertyMap";
 import { propertyTypeTranslations } from "@/utils/propertyTypes";
+import { declension } from "@/utils/declension";
 
 const PropertyDetails = ({ property }) => {
   return (
@@ -67,11 +68,15 @@ const PropertyDetails = ({ property }) => {
         <div className="flex justify-center gap-4 text-blue-500 mb-4 text-xl space-x-9">
           <p>
             <FaBed className="inline-block mr-2" /> {property.beds}{" "}
-            <span className="hidden sm:inline">Спальни</span>
+            <span className="hidden sm:inline">
+              {declension(property.beds, ["Спальня", "Спальни", "Спален"])}
+            </span>
           </p>
           <p>
             <FaBath className="inline-block mr-2" /> {property.baths}{" "}
-            <span className="hidden sm:inline">Ванные</span>
+            <span className="hidden sm:inline">
+              {declension(property.baths, ["Ванная", "Ванные", "Ванных"])}
+            </span>
           </p>
           <p>
             <i className="fa-solid fa-ruler-combined"></i>

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { propertyTypeTranslations } from "@/utils/propertyTypes";
+import { declension } from "@/utils/declension";
+
 import {
   FaBed,
   FaBath,
@@ -20,6 +22,15 @@ const FeaturedPropertyCard = ({ property }) => {
     } else if (rates.nightly) {
       return `${rates.nightly.toLocaleString()}₽/ночь`;
     }
+  };
+
+  // Получаем правильную форму слова
+  const getBedWord = (count) => {
+    return declension(count, ["Спальня", "Спальни", "Спален"]);
+  };
+
+  const getBathWord = (count) => {
+    return declension(count, ["Ванная", "Ванные", "Ванных"]);
   };
 
   return (
@@ -43,11 +54,15 @@ const FeaturedPropertyCard = ({ property }) => {
         <div className="flex justify-center gap-4 text-gray-500 mb-4">
           <p>
             <FaBed className="inline-block mr-2" /> {property.beds}{" "}
-            <span className="md:hidden lg:inline">Спальни</span>
+            <span className="md:hidden lg:inline">
+              {getBedWord(property.beds)}
+            </span>
           </p>
           <p>
             <FaBath className="inline-block mr-2" /> {property.baths}{" "}
-            <span className="md:hidden lg:inline">Ванные</span>
+            <span className="md:hidden lg:inline">
+              {getBathWord(property.baths)}
+            </span>
           </p>
           <p>
             <FaRulerCombined className="inline-block mr-2" />

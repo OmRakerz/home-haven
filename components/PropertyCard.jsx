@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { propertyTypeTranslations } from "@/utils/propertyTypes";
-
+import { declension } from "@/utils/declension";
 import {
   FaBed,
   FaBath,
@@ -47,11 +47,15 @@ const PropertyCard = ({ property }) => {
         <div className="flex justify-center gap-4 text-gray-500 mb-4">
           <p>
             <FaBed className="inline mr-2" /> {property.beds}{" "}
-            <span className="md:hidden lg:inline">Спальни</span>
+            <span className="md:hidden lg:inline">
+              {declension(property.beds, ["Спальня", "Спальни", "Спален"])}
+            </span>
           </p>
           <p>
             <FaBath className="inline mr-2" /> {property.baths}{" "}
-            <span className="md:hidden lg:inline">Ванные</span>
+            <span className="md:hidden lg:inline">
+              {declension(property.baths, ["Ванная", "Ванные", "Ванных"])}
+            </span>
           </p>
           <p>
             <FaRulerCombined className="inline mr-2" />
