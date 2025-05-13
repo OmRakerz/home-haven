@@ -5,7 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import logo from "@/assets/images/logo-white.png";
 import profileDefault from "@/assets/images/profile.png";
-import { FaGoogle, FaUser, FaSignOutAlt, FaBookmark } from "react-icons/fa";
+import {
+  FaGoogle,
+  FaGithub,
+  FaUser,
+  FaSignOutAlt,
+  FaBookmark,
+} from "react-icons/fa";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 import UnreadMessageCount from "./UnreadMessageCount";
 
@@ -105,16 +111,28 @@ const Navbar = () => {
           {/* <!-- Правое меню (выход из системы) --> */}
           {!session && (
             <div className="hidden md:block md:ml-6">
-              <div className="flex items-center">
+              <div className="flex items-center gap-2">
                 {providers &&
                   Object.values(providers).map((provider, index) => (
                     <button
                       onClick={() => signIn(provider.id)}
                       key={index}
-                      className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
+                      className={`flex items-center ${
+                        provider.id === "guest"
+                          ? "text-black bg-yellow-300"
+                          : "text-white bg-gray-700"
+                      } hover:bg-gray-900 hover:text-white rounded-md px-3 py-2`}
                     >
-                      <FaGoogle className="text-white mr-2" />
-                      <span>Вход / Регистрация</span>
+                      {provider.id === "google" ? (
+                        <FaGoogle className="mr-2" />
+                      ) : provider.id === "github" ? (
+                        <FaGithub className="mr-2" />
+                      ) : (
+                        <FaUser className="mr-2" />
+                      )}
+                      <span>
+                        {provider.id === "guest" ? "Гость" : provider.name}
+                      </span>
                     </button>
                   ))}
               </div>
@@ -237,6 +255,7 @@ const Navbar = () => {
               className={`${
                 pathname === "/" ? "bg-black" : ""
               } text-white block rounded-md px-3 py-2 text-base font-medium`}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Главная
             </Link>
@@ -245,6 +264,7 @@ const Navbar = () => {
               className={`${
                 pathname === "/properties" ? "bg-black" : ""
               } text-white block rounded-md px-3 py-2 text-base font-medium`}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Недвижимость
             </Link>
@@ -254,6 +274,7 @@ const Navbar = () => {
                 className={`${
                   pathname === "/properties/add" ? "bg-black" : ""
                 } text-white block rounded-md px-3 py-2 text-base font-medium`}
+                onClick={() => setIsMobileMenuOpen(false)}
               >
                 Добавить
               </Link>
@@ -263,12 +284,29 @@ const Navbar = () => {
               providers &&
               Object.values(providers).map((provider, index) => (
                 <button
-                  onClick={() => signIn(provider.id)}
+                  onClick={() => {
+                    signIn(provider.id);
+                    setIsMobileMenuOpen(false);
+                  }}
                   key={index}
-                  className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 w-full"
+                  className={`flex items-center ${
+                    provider.id === "guest"
+                      ? "text-black bg-yellow-300"
+                      : "text-white bg-gray-700"
+                  } hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 w-full`}
                 >
-                  <FaGoogle className="mr-2" />
-                  <span>Вход / Регистрация</span>
+                  {provider.id === "google" ? (
+                    <FaGoogle className="mr-2" />
+                  ) : provider.id === "github" ? (
+                    <FaGithub className="mr-2" />
+                  ) : (
+                    <FaUser className="mr-2" />
+                  )}
+                  <span>
+                    {provider.id === "guest"
+                      ? "Войти как гость"
+                      : `Войти через ${provider.name}`}
+                  </span>
                 </button>
               ))}
           </div>
