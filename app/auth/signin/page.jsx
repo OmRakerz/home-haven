@@ -57,10 +57,9 @@ const LoginPage = () => {
                 className={`flex items-center justify-center
                 ${
                   provider.id === "guest"
-                    ? "bg-yellow-300 text-black"
-                    : "bg-gray-700 text-white"
-                }
-                hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 mb-4 w-full`}
+                    ? "bg-yellow-400 text-black hover:bg-yellow-500"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-900 hover:text-white"
+                } rounded-md px-3 py-2 mb-4 w-full transition-colors duration-300 shadow-sm`}
               >
                 {icons[provider.id]}
                 <span className="ml-2">

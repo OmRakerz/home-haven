@@ -15,6 +15,12 @@ import {
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 import UnreadMessageCount from "./UnreadMessageCount";
 
+const icons = {
+  google: <FaGoogle className="text-lg" />,
+  github: <FaGithub className="text-lg" />,
+  guest: <FaUser className="text-lg" />,
+};
+
 const Navbar = () => {
   const { data: session } = useSession();
   const profileImage = session?.user?.image;
@@ -107,7 +113,6 @@ const Navbar = () => {
               </div>
             </div>
           </div>
-
           {/* <!-- Правое меню (выход из системы) --> */}
           {!session && (
             <div className="hidden md:block md:ml-6">
@@ -115,23 +120,23 @@ const Navbar = () => {
                 {providers &&
                   Object.values(providers).map((provider, index) => (
                     <button
-                      onClick={() => signIn(provider.id)}
                       key={index}
-                      className={`flex items-center ${
+                      onClick={() => signIn(provider.id)}
+                      className={`flex items-center justify-center ${
                         provider.id === "guest"
-                          ? "text-black bg-yellow-300"
-                          : "text-white bg-gray-700"
-                      } hover:bg-gray-900 hover:text-white rounded-md px-3 py-2`}
+                          ? "text-black bg-yellow-400 hover:bg-yellow-500"
+                          : "text-gray-800 bg-gray-200 hover:bg-gray-900 hover:text-white"
+                      } rounded-md p-2 group h-10 w-10 hover:w-auto transition-all duration-300 overflow-hidden`}
                     >
-                      {provider.id === "google" ? (
-                        <FaGoogle className="mr-2" />
-                      ) : provider.id === "github" ? (
-                        <FaGithub className="mr-2" />
-                      ) : (
-                        <FaUser className="mr-2" />
-                      )}
-                      <span>
-                        {provider.id === "guest" ? "Гость" : provider.name}
+                      <span className="group-hover:animate-bounce">
+                        {icons[provider.id]}
+                      </span>
+                      <span className="ml-0 w-0 group-hover:ml-2 group-hover:w-auto opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap">
+                        {provider.id === "guest"
+                          ? "Гость"
+                          : provider.name === "Google"
+                          ? "Google"
+                          : "GitHub"}
                       </span>
                     </button>
                   ))}
@@ -291,9 +296,9 @@ const Navbar = () => {
                   key={index}
                   className={`flex items-center ${
                     provider.id === "guest"
-                      ? "text-black bg-yellow-300"
-                      : "text-white bg-gray-700"
-                  } hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 w-full`}
+                      ? "text-black bg-yellow-400 hover:bg-yellow-500"
+                      : "text-white bg-gray-700 hover:bg-gray-900"
+                  } rounded-md px-3 py-2 w-full`}
                 >
                   {provider.id === "google" ? (
                     <FaGoogle className="mr-2" />
