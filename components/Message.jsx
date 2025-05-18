@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { toastSuccess, toastError } from "@/components/Toasts";
 import { useGlobalContext } from "@/context/GlobalContext";
 
 const Message = ({ message }) => {
@@ -20,14 +21,12 @@ const Message = ({ message }) => {
         setIsRead(read);
         setUnreadCount((prevCount) => (read ? prevCount - 1 : prevCount + 1));
         if (read) {
-          toast.success("Сообщение отмечено как прочитанное");
-        } else {
-          toast.success("Отмечено как новое");
+          toastSuccess("Прочитано");
         }
       }
     } catch (error) {
       console.log(error);
-      toast.error("Что-то пошло не так");
+      toastError("Что-то пошло не так");
     }
   };
 
@@ -40,11 +39,11 @@ const Message = ({ message }) => {
       if (res.status === 200) {
         setIsDeleted(true);
         setUnreadCount((prevCount) => prevCount - 1);
-        toast.success("Сообщение удалено");
+        toastSuccess("Сообщение удалено");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Сообщение не было удалено");
+      toastError("Сообщение не было удалено");
     }
   };
 

@@ -56,12 +56,12 @@ export const POST = async (request) => {
     if (isBookmarked) {
       // Если закладка уже была сделана, то удалим ее из закладок
       user.bookmarks.pull(propertyId);
-      message = "Закладка успешно удалена";
+      message = "Закладка удалена";
       isBookmarked = false;
     } else {
       // Если нет закладок, то добавьте его в закладки
       user.bookmarks.push(propertyId);
-      message = "Закладка успешно добавлена";
+      message = "Закладка добавлена";
       isBookmarked = true;
 
       // Проверяем, достигло ли свойство 3+ закладок от разных пользователей

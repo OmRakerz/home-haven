@@ -7,6 +7,8 @@ import profileDefault from "@/assets/images/profile.png";
 import Spinner from "@/components/Spinner";
 import { toast } from "react-toastify";
 
+import { toastSuccess, toastError } from "@/components/Toasts";
+
 const ProfilePage = () => {
   const { data: session } = useSession();
   const profileImage = session?.user?.image;
@@ -62,13 +64,13 @@ const ProfilePage = () => {
 
         setProperties(updatedProperties);
 
-        toast.success("Недвижимость удалена");
+        toastSuccess("Недвижимость удалена");
       } else {
-        toast.error("Не удалось удалить недвижимость");
+        toastError("Не удалось удалить недвижимость");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Не удалось удалить недвижимость");
+      toastError("Не удалось удалить недвижимость");
     }
   };
 

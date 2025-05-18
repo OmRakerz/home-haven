@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import { toastSuccess, toastError } from "@/components/Toasts";
 import { FaBookmark } from "react-icons/fa";
 
 const BookmarkButton = ({ property }) => {
@@ -45,9 +46,7 @@ const BookmarkButton = ({ property }) => {
 
   const handleClick = async () => {
     if (!userId) {
-      toast.error(
-        "Вам необходимо войти, чтобы добавить недвижимость в закладки"
-      );
+      toastError("Вам необходимо войти в систему");
       return;
     }
 
@@ -62,12 +61,12 @@ const BookmarkButton = ({ property }) => {
 
       if (res.status === 200) {
         const data = await res.json();
-        toast.success(data.message);
+        toastSuccess(data.message);
         setIsBookmarked(data.isBookmarked);
       }
     } catch (error) {
       console.log(error);
-      toast.error("Что-то пошло не так");
+      toastError("Что-то пошло не так");
     }
   };
 

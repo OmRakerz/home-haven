@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import PropertyCard from "@/components/PropertyCard";
 import Spinner from "@/components/Spinner";
 import { toast } from "react-toastify";
+import { toastError } from "@/components/Toasts";
 import { FaBookmark } from "react-icons/fa";
 
 const SavedPropertiesPage = () => {
@@ -19,11 +20,11 @@ const SavedPropertiesPage = () => {
           setProperties(data);
         } else {
           console.log(res.statusText);
-          toast.error("Не удалось получить сохраненные недвижимости");
+          toastError("Не удалось получить сохраненные недвижимости");
         }
       } catch (error) {
         console.log(error);
-        toast.error("Не удалось получить сохраненные недвижимости");
+        toastError("Не удалось получить сохраненные недвижимости");
       } finally {
         setLoading(false);
       }

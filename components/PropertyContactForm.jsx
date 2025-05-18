@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { toastSuccess, toastError } from "@/components/Toasts";
 import { useSession } from "next-auth/react";
 
 const PropertyContactForm = ({ property }) => {
@@ -70,17 +71,17 @@ const PropertyContactForm = ({ property }) => {
       });
 
       if (res.status === 200) {
-        toast.success("Сообщение успешно отправлено");
+        toastSuccess("Сообщение отправлено");
         setWasSubmitted(true);
       } else if (res.status === 400 || res.status === 401) {
         const dataObj = await res.json();
-        toast.error(dataObj.message);
+        toastError(dataObj.message);
       } else {
-        toast.error("Ошибка при отправке формы");
+        toastError("Ошибка при отправке формы");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Ошибка при отправке формы");
+      toastError("Ошибка при отправке формы");
     } finally {
       setName("");
       setEmail("");

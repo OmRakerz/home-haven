@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import { GlobalProvider } from "@/context/GlobalContext";
 import "@/assets/styles/globals.css";
 import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "react-hot-toast";
 import "photoswipe/dist/photoswipe.css";
 
 export const metadata = {
@@ -22,7 +23,7 @@ const MainLayout = ({ children }) => {
             <Navbar />
             <main className="flex-grow">{children}</main>
             <Footer />
-            <ToastContainer />
+            <Toaster />
           </body>
         </html>
       </AuthProvider>
