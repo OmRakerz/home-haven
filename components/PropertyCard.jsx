@@ -23,6 +23,19 @@ const PropertyCard = ({ property }) => {
     }
   };
 
+  const formatCreatedAt = (dateString) => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+    const dateOptions = { day: "numeric", month: "long" };
+    const timeOptions = { hour: "2-digit", minute: "2-digit" };
+
+    const formattedDate = date.toLocaleDateString("ru-RU", dateOptions);
+    const formattedTime = date.toLocaleTimeString("ru-RU", timeOptions);
+
+    return `${formattedDate} в ${formattedTime}`;
+  };
+
   return (
     <div className="rounded-xl shadow-md relative flex flex-col justify-between bg-blue-50">
       <Image
@@ -35,11 +48,17 @@ const PropertyCard = ({ property }) => {
       />
       <div className="p-4">
         <div className="text-left md:text-center lg:text-left mb-6">
-          <div className="text-gray-600">
-            {propertyTypeTranslations[property.type] || property.type}
+          <div className="flex justify-between items-center">
+            <div className="text-gray-600">
+              {propertyTypeTranslations[property.type] || property.type}
+            </div>
+            <span className="text-gray-400 text-sm ml-2 hidden md:inline-block">
+              {formatCreatedAt(property.createdAt)}
+            </span>
           </div>
           <h3 className="text-xl font-bold">{property.name}</h3>
         </div>
+
         <h3 className="absolute top-[10px] right-[10px] bg-white px-4 py-2 rounded-lg text-blue-500 font-bold text-right md:text-center lg:text-right">
           {getRateDisplay()}
         </h3>

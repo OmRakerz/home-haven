@@ -30,11 +30,30 @@ const PropertyDetails = ({ property }) => {
     ));
   };
 
+  const formatCreatedAt = (dateString) => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+
+    // Форматируем дату как "9 мая"
+    const dateOptions = { day: "numeric", month: "long" };
+    const formattedDate = date.toLocaleDateString("ru-RU", dateOptions);
+
+    // Форматируем время как "10:48"
+    const timeOptions = { hour: "2-digit", minute: "2-digit" };
+    const formattedTime = date.toLocaleTimeString("ru-RU", timeOptions);
+
+    return `${formattedDate} в ${formattedTime}`;
+  };
+
   return (
     <main>
       <div className="bg-white p-6 rounded-lg shadow-md text-center md:text-left">
         <div className="text-gray-500 mb-4">
           {propertyTypeTranslations[property.type] || property.type}
+          <span className="text-gray-400 ml-2">
+            • {formatCreatedAt(property.createdAt)}
+          </span>
         </div>
         <h1 className="text-3xl font-bold mb-4">{property.name}</h1>
         <div className="text-gray-500 mb-4 flex align-middle justify-center md:justify-start">
