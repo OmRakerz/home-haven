@@ -9,6 +9,7 @@ import Pagination from "@/components/Pagination";
 import { toast } from "react-toastify";
 import { declension } from "@/utils/declension";
 import { toastSuccess, toastError } from "@/components/Toasts";
+import { FaChevronUp, FaChevronDown } from "react-icons/fa6";
 
 const ProfilePage = () => {
   const { data: session } = useSession();
@@ -18,7 +19,9 @@ const ProfilePage = () => {
 
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [sortOrder, setSortOrder] = useState("newest");
+  const [showSort, setShowSort] = useState(false);
 
   // Состояние для пагинации
   const [page, setPage] = useState(1);
@@ -145,18 +148,67 @@ const ProfilePage = () => {
 
                 {/* Выпадающий список сортировки */}
                 <div className="relative inline-block w-full sm:w-auto">
-                  <select
-                    id="sort"
-                    className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    value={sortOrder}
-                    onChange={(e) => {
-                      setSortOrder(e.target.value);
-                      setPage(1); // При изменении сортировки возвращаемся на первую страницу
-                    }}
+                  <button
+                    onClick={() => setShowSort(!showSort)}
+                    className={`block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none text-sm font-semibold text-gray-700 hover:text-blue-600 transition-colors ${
+                      showSort ? "ring-2 ring-blue-500" : ""
+                    }`}
+                    type="button"
+                    aria-expanded={showSort}
                   >
-                    <option value="newest">Сначала новые</option>
-                    <option value="oldest">Сначала старые</option>
-                  </select>
+                    {sortOrder === "newest"
+                      ? "Сначала новые"
+                      : "Сначала старые"}
+                    <span className="float-right ml-2">
+                      {showSort ? <FaChevronUp /> : <FaChevronDown />}
+                    </span>
+                  </button>
+
+                  {/* Выпадающее меню с анимацией */}
+                  <div
+                    className={`absolute right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 min-w-full max-w-full overflow-hidden ${
+                      showSort
+                        ? "opacity-100 pointer-events-auto"
+                        : "opacity-0 pointer-events-none"
+                    } transition-opacity duration-300 ease-in-out`}
+                  >
+                    <ul>
+                      <li>
+                        <button
+                          onClick={() => {
+                            setSortOrder("newest");
+                            setShowSort(false);
+                            setPage(1);
+                          }}
+                          className={`block w-full text-left px-4 py-2 text-sm font-medium hover:bg-blue-50 hover:text-blue-600 ${
+                            sortOrder === "newest"
+                              ? "bg-blue-50 text-blue-600 font-bold"
+                              : "text-gray-700"
+                          }`}
+                          type="button"
+                        >
+                          Сначала новые
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => {
+                            setSortOrder("oldest");
+                            setShowSort(false);
+                            setPage(1);
+                          }}
+                          className={`block w-full text-left px-4 py-2 text-sm font-medium hover:bg-blue-50 hover:text-blue-600 ${
+                            sortOrder === "oldest"
+                              ? "bg-blue-50 text-blue-600 font-bold"
+                              : "text-gray-700"
+                          }`}
+                          type="button"
+                        >
+                          Сначала старые
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
 
