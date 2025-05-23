@@ -177,7 +177,7 @@ const PropertyDetails = ({ property }) => {
       </div>
 
       {/* Контакты владельца */}
-      <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+      {/* <div className="bg-white p-6 rounded-lg shadow-md mt-6">
         <button
           className="flex items-center justify-between w-full text-left"
           onClick={() => setIsContactsExpanded(!isContactsExpanded)}
@@ -223,6 +223,66 @@ const PropertyDetails = ({ property }) => {
             </div>
           </div>
         )}
+      </div> */}
+
+      {/* Контакты владельца */}
+      <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+        <button
+          className="flex items-center justify-between w-full text-left"
+          onClick={() => setIsContactsExpanded(!isContactsExpanded)}
+          type="button"
+          aria-expanded={isContactsExpanded}
+        >
+          <h3 className="text-lg font-bold">Контакты владельца</h3>
+          {isContactsExpanded ? (
+            <FaChevronUp className="text-gray-500" />
+          ) : (
+            <FaChevronDown className="text-gray-500" />
+          )}
+        </button>
+
+        {/* Анимация через max-h + opacity */}
+        <div
+          className={`overflow-hidden transition-all duration-300 ${
+            isContactsExpanded
+              ? "max-h-[400px] opacity-100"
+              : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="pt-4">
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <FaUser className="text-blue-500 mr-3 text-lg" />
+                <div>
+                  <p className="text-gray-500 text-sm">Имя</p>
+                  <p className="font-medium">
+                    {property.seller_info?.name || "Не указано"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <FaEnvelope className="text-blue-500 mr-3 text-lg" />
+                <div>
+                  <p className="text-gray-500 text-sm">Email</p>
+                  <p className="font-medium">
+                    {property.seller_info?.email || "Не указано"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <FaPhone className="text-blue-500 mr-3 text-lg" />
+                <div>
+                  <p className="text-gray-500 text-sm">Телефон</p>
+                  <p className="font-medium">
+                    {property.seller_info?.phone || "Не указано"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Карта местоположения */}
@@ -240,7 +300,6 @@ const PropertyDetails = ({ property }) => {
             aria-expanded={showRecentlyViewed}
           >
             <h3 className="text-lg font-bold">Последние просмотренные</h3>
-
             {showRecentlyViewed ? (
               <FaChevronUp className="text-gray-500" />
             ) : (
@@ -248,11 +307,18 @@ const PropertyDetails = ({ property }) => {
             )}
           </button>
 
-          {showRecentlyViewed && (
-            <div className="mt-4">
+          {/* Анимация через opacity */}
+          <div
+            className={`overflow-hidden transition-all duration-300 ${
+              showRecentlyViewed
+                ? "max-h-[500px] opacity-100"
+                : "max-h-0 opacity-0"
+            }`}
+          >
+            <div className="pt-4">
               <RecentlyViewedSlider items={recentlyViewed} />
             </div>
-          )}
+          </div>
         </div>
       )}
     </main>

@@ -195,7 +195,7 @@ const Navbar = () => {
                 </div>
 
                 {/* <!-- Раскрывающийся список профиля --> */}
-                {isProfileMenuOpen && (
+                {/* {isProfileMenuOpen && (
                   <div
                     id="user-menu"
                     className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
@@ -244,7 +244,56 @@ const Navbar = () => {
                       Выйти
                     </button>
                   </div>
-                )}
+                )} */}
+                <div
+                  className={`absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden transition-all duration-300 ${
+                    isProfileMenuOpen
+                      ? "opacity-100 scale-y-100"
+                      : "opacity-0 scale-y-0"
+                  }`}
+                  style={{ transformOrigin: "top right" }}
+                  id="user-menu"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="user-menu-button"
+                  tabIndex="-1"
+                >
+                  <Link
+                    href="/profile"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700"
+                    role="menuitem"
+                    tabIndex="-1"
+                    id="user-menu-item-0"
+                    onClick={() => setIsProfileMenuOpen(false)}
+                  >
+                    <FaUser className="mr-2" />
+                    Профиль
+                  </Link>
+                  <Link
+                    href="/properties/saved"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700"
+                    role="menuitem"
+                    tabIndex="-1"
+                    id="user-menu-item-2"
+                    onClick={() => setIsProfileMenuOpen(false)}
+                  >
+                    <FaBookmark className="mr-2" />
+                    Закладки
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setIsProfileMenuOpen(false);
+                      signOut();
+                    }}
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left"
+                    role="menuitem"
+                    tabIndex="-1"
+                    id="user-menu-item-2"
+                  >
+                    <FaSignOutAlt className="mr-2" />
+                    Выйти
+                  </button>
+                </div>
               </div>
             </div>
           )}
