@@ -12,6 +12,9 @@ export const metadata = {
   title: "HomeHaven | Найти идеальный вариант",
   description: "Найдите недвижимость своей мечты",
   keywords: "квартира, найти аренду, найти недвижимость",
+  icons: {
+    icon: "images/logo.png",
+  },
 };
 
 const MainLayout = ({ children }) => {
