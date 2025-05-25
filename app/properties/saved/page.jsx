@@ -1,15 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
-import PropertyCard from "@/components/PropertyCard";
-import Spinner from "@/components/Spinner";
-import { toast } from "react-toastify";
-import { toastError } from "@/components/Toasts";
 import { FaBookmark } from "react-icons/fa";
+import BookmarkPropertyCard from "@/components/BookmarkPropertyCard";
+import Pagination from "@/components/Pagination";
+import Spinner from "@/components/Spinner";
+import { toastSuccess, toastError } from "@/components/Toasts";
 
 const SavedPropertiesPage = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const pageSize = 3;
 
+  // Получаем список закладок
   useEffect(() => {
     const fetchSavedProperties = async () => {
       try {
@@ -19,39 +22,93 @@ const SavedPropertiesPage = () => {
           const data = await res.json();
           setProperties(data);
         } else {
-          console.log(res.statusText);
-          toastError("Не удалось получить сохраненные недвижимости");
+          toastError("Не удалось получить данные");
         }
       } catch (error) {
-        console.log(error);
-        toastError("Не удалось получить сохраненные недвижимости");
+        console.error("Ошибка при загрузке закладок:", error);
+        toastError("Ошибка при загрузке данных");
       } finally {
         setLoading(false);
       }
     };
 
     fetchSavedProperties();
-  }, []);
+  }, [page]);
 
-  return loading ? (
-    <Spinner loading={loading} />
-  ) : (
+  const totalItems = properties.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
+
+  const paginatedProperties = properties.slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
+
+  // Удаление из закладок
+  const handleRemoveBookmark = async (propertyId) => {
+    try {
+      const res = await fetch(`/api/bookmarks/${propertyId}`, {
+        method: "DELETE",
+      });
+
+      if (res.status === 200) {
+        setProperties((prev) => prev.filter((prop) => prop._id !== propertyId));
+
+        // После удаления проверим, есть ли ещё объекты на текущей странице
+        const newPropertiesCount = properties.length - 1;
+        const newTotalPages = Math.ceil(newPropertiesCount / pageSize);
+
+        // Если текущая страница превышает новое количество страниц — перейдём на последнюю доступную
+        if (page > newTotalPages && newTotalPages >= 1) {
+          setPage(newTotalPages);
+        }
+
+        toastSuccess("Объявление удалено из закладок");
+      } else {
+        toastError("Не удалось удалить из закладок");
+      }
+    } catch (error) {
+      console.error("Ошибка при удалении:", error);
+      toastError("Что-то пошло не так");
+    }
+  };
+
+  return (
     <section className="px-4 py-6 flex-1">
       <h1 className="text-3xl xl:text-4xl mb-4 text-center font-bold underline">
         Сохранённые объявления
         <FaBookmark className="ml-2 inline-block text-3xl xl:text-4xl pb-1 xl:pb-2" />
       </h1>
-      <div className="container-xl lg:container m-auto px-4 py-6">
-        {properties.length === 0 ? (
-          <p>Нет сохраненных объектов недвижимости</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {properties.map((property) => (
-              <PropertyCard key={property._id} property={property} />
-            ))}
+
+      {loading ? (
+        <Spinner loading={loading} />
+      ) : totalItems === 0 ? (
+        <p className="text-center">Нет сохранённых объявлений</p>
+      ) : (
+        <>
+          {/* Список карточек */}
+          <div className="container mx-auto px-4 py-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {paginatedProperties.map((property) => (
+                <BookmarkPropertyCard
+                  key={property._id}
+                  property={property}
+                  onRemove={() => handleRemoveBookmark(property._id)}
+                />
+              ))}
+            </div>
           </div>
-        )}
-      </div>
+
+          {/* Пагинация */}
+          {totalPages > 1 && (
+            <Pagination
+              page={page}
+              pageSize={pageSize}
+              totalItems={totalItems}
+              onPageChange={setPage}
+            />
+          )}
+        </>
+      )}
     </section>
   );
 };
