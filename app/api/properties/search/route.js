@@ -12,6 +12,8 @@ export const GET = async (request) => {
     const rooms = searchParams.get("rooms");
     const priceFrom = searchParams.get("priceFrom");
     const priceTo = searchParams.get("priceTo");
+    const page = parseInt(searchParams.get("page")) || 1;
+    const pageSize = 6;
 
     // Создаем объект запроса
     let query = {};
@@ -38,15 +40,18 @@ export const GET = async (request) => {
     // Фильтр по количеству комнат
     if (rooms) {
       const roomsArray = rooms.split(",");
-      // Для варианта "5+"
+      const roomQuery = {}; // ✅ Здесь мы определяем roomQuery
+
       if (roomsArray.includes("5+")) {
-        query.$or = [
+        roomQuery.$or = [
           { beds: { $in: roomsArray.filter((r) => r !== "5+").map(Number) } },
           { beds: { $gte: 5 } },
         ];
       } else {
-        query.beds = { $in: roomsArray.map(Number) };
+        roomQuery.beds = { $in: roomsArray.map(Number) };
       }
+
+      query = { ...query, ...roomQuery };
     }
 
     // Фильтр по цене
@@ -56,11 +61,17 @@ export const GET = async (request) => {
       if (priceTo) query["rates.monthly"].$lte = Number(priceTo);
     }
 
-    const properties = await Property.find(query);
+    // Подсчёт общего числа объявлений
+    const total = await Property.countDocuments(query);
 
-    return new Response(JSON.stringify(properties), { status: 200 });
+    // Получение данных с пагинацией
+    const properties = await Property.find(query)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+
+    return new Response(JSON.stringify({ properties, total }), { status: 200 });
   } catch (error) {
-    console.log(error);
+    console.error("Ошибка при поиске недвижимости:", error);
     return new Response("Что-то пошло не так", { status: 500 });
   }
 };

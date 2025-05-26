@@ -1,18 +1,24 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaArrowAltCircleLeft } from "react-icons/fa";
 import { FaMagnifyingGlassLocation } from "react-icons/fa6";
 import PropertyCard from "@/components/PropertyCard";
 import Spinner from "@/components/Spinner";
 import PropertySearchForm from "@/components/PropertySearchForm";
+import Pagination from "@/components/Pagination";
 
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [totalItems, setTotalItems] = useState(0); // Общее количество объявлений
+
+  const pageSize = 6; // Количество объявлений на странице
+  const page = parseInt(searchParams.get("page")) || 1;
 
   useEffect(() => {
     const fetchSearchResults = async () => {
@@ -24,11 +30,12 @@ const SearchResultsPage = () => {
           rooms: searchParams.get("rooms"),
           priceFrom: searchParams.get("priceFrom"),
           priceTo: searchParams.get("priceTo"),
+          page, // Добавляем номер страницы
         };
 
         // Формируем URL с параметрами
         const queryString = Object.entries(params)
-          .filter(([_, value]) => value !== null)
+          .filter(([_, value]) => value !== null && value !== "")
           .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
           .join("&");
 
@@ -36,19 +43,32 @@ const SearchResultsPage = () => {
 
         if (res.status === 200) {
           const data = await res.json();
-          setProperties(data);
+          setProperties(data.properties || []);
+          setTotalItems(data.total || data.length || 0);
         } else {
           setProperties([]);
+          setTotalItems(0);
         }
       } catch (error) {
         console.log(error);
+        setProperties([]);
+        setTotalItems(0);
       } finally {
         setLoading(false);
       }
     };
 
     fetchSearchResults();
-  }, [searchParams]);
+  }, [searchParams, page]);
+
+  // Обработчик изменения страницы
+  const handlePageChange = (newPage) => {
+    const currentParams = new URLSearchParams(
+      Array.from(searchParams.entries())
+    );
+    currentParams.set("page", newPage);
+    router.push(`/properties/search-results?${currentParams.toString()}`);
+  };
 
   return (
     <>
@@ -76,11 +96,23 @@ const SearchResultsPage = () => {
             {properties.length === 0 ? (
               <p>По вашему запросу ничего не найдено</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {properties.map((property) => (
-                  <PropertyCard key={property._id} property={property} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {properties.map((property) => (
+                    <PropertyCard key={property._id} property={property} />
+                  ))}
+                </div>
+
+                {/* Показываем пагинацию только если больше или равно 7 объявлений */}
+                {totalItems > pageSize && (
+                  <Pagination
+                    page={page}
+                    pageSize={pageSize}
+                    totalItems={totalItems}
+                    onPageChange={handlePageChange}
+                  />
+                )}
+              </>
             )}
           </div>
         </section>

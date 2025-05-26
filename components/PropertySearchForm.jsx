@@ -43,26 +43,42 @@ const PropertySearchForm = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Обработка отправки формы
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const queryParams = new URLSearchParams();
+  // Форматирование чисел с пробелами
+  const formatNumberWithSpaces = (num) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  };
 
-    if (location) queryParams.append("location", location);
-    if (propertyTypes.length > 0)
-      queryParams.append("propertyType", propertyTypes.join(","));
-    if (rooms.length > 0) queryParams.append("rooms", rooms.join(","));
-    if (priceFrom) queryParams.append("priceFrom", priceFrom);
-    if (priceTo) queryParams.append("priceTo", priceTo);
+  const parseNumberWithSpaces = (value) => {
+    return value.replace(/\D/g, "");
+  };
 
-    router.push(`/properties/search-results?${queryParams.toString()}`);
+  // Форматирование вывода типов недвижимости
+  const formatTypesDisplay = () => {
+    if (propertyTypes.includes("All") || propertyTypes.length === 0)
+      return "Все";
+    if (propertyTypes.length >= 3)
+      return `${propertyTypes
+        .slice(0, 2)
+        .map((t) => propertyTypeTranslations[t])
+        .join(", ")}...`;
+    return propertyTypes
+      .map((type) => propertyTypeTranslations[type])
+      .join(", ");
   };
 
   // Переключение типа недвижимости
   const togglePropertyType = (type) => {
-    setPropertyTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-    );
+    setPropertyTypes((prev) => {
+      if (type === "All") {
+        return ["All"];
+      } else if (prev.includes("All")) {
+        return [type];
+      } else if (prev.includes(type)) {
+        return prev.filter((t) => t !== type);
+      } else {
+        return [...prev, type];
+      }
+    });
   };
 
   // Переключение количества комнат
@@ -90,20 +106,38 @@ const PropertySearchForm = () => {
   // Форматирование вывода цены
   const formatPriceDisplay = () => {
     if (!priceFrom && !priceTo) return "Цена";
-    if (priceFrom && priceTo) return `${priceFrom}-${priceTo}₽`;
-    if (priceFrom) return `от ${priceFrom}₽`;
-    if (priceTo) return `до ${priceTo}₽`;
+    if (priceFrom && priceTo)
+      return `${formatNumberWithSpaces(priceFrom)}–${formatNumberWithSpaces(
+        priceTo
+      )} ₽`;
+    if (priceFrom) return `от ${formatNumberWithSpaces(priceFrom)} ₽`;
+    if (priceTo) return `до ${formatNumberWithSpaces(priceTo)} ₽`;
+  };
+
+  // Обработка отправки формы
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const queryParams = new URLSearchParams();
+
+    if (location) queryParams.append("location", location);
+    if (propertyTypes.length > 0 && !propertyTypes.includes("All"))
+      queryParams.append("propertyType", propertyTypes.join(","));
+    if (rooms.length > 0) queryParams.append("rooms", rooms.join(","));
+    if (priceFrom) queryParams.append("priceFrom", priceFrom);
+    if (priceTo) queryParams.append("priceTo", priceTo);
+
+    router.push(`/properties/search-results?${queryParams.toString()}`);
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col md:flex-row items-center w-full max-w-6xl mx-auto bg-white rounded-lg shadow-md border border-blue-500"
+      className="flex flex-col md:flex-row items-stretch w-full max-w-6xl mx-auto bg-white rounded-lg border border-blue-500 shadow-md"
     >
       {/* Тип недвижимости */}
       <div
         ref={typesRef}
-        className="relative flex-1 w-full border-r border-blue-200"
+        className="relative flex-1 w-full border-r border-blue-500"
       >
         <button
           type="button"
@@ -114,18 +148,12 @@ const PropertySearchForm = () => {
           }}
           className="w-full px-4 py-3 text-left focus:outline-none flex justify-between items-center"
         >
-          <span className="truncate">
-            {propertyTypes.length === 0
-              ? "Все"
-              : propertyTypes
-                  .map((type) => propertyTypeTranslations[type])
-                  .join(", ")}
-          </span>
+          <span className="truncate">{formatTypesDisplay()}</span>
           {showTypesDropdown ? <FaChevronUp /> : <FaChevronDown />}
         </button>
 
         {showTypesDropdown && (
-          <div className="absolute z-50 mt-1 w-full bg-white border border-blue-200 rounded-md shadow-lg dropdown-enter">
+          <div className="absolute z-50 left-0 right-0 mt-1 w-full bg-white border border-blue-500 rounded-md shadow-lg p-2 animate-fadeIn">
             {Object.entries(propertyTypeTranslations).map(([value, label]) => (
               <div key={value} className="px-4 py-2 hover:bg-blue-50">
                 <label className="flex items-center space-x-2 cursor-pointer">
@@ -146,7 +174,7 @@ const PropertySearchForm = () => {
       {/* Количество комнат */}
       <div
         ref={roomsRef}
-        className="relative flex-1 w-full border-r border-blue-200"
+        className="relative flex-1 w-full border-r border-blue-500"
       >
         <button
           type="button"
@@ -162,7 +190,7 @@ const PropertySearchForm = () => {
         </button>
 
         {showRoomsDropdown && (
-          <div className="absolute z-50 mt-1 w-full bg-white border border-blue-200 rounded-md shadow-lg p-2">
+          <div className="absolute z-50 left-0 right-0 mt-1 w-full bg-white border border-blue-500 rounded-md shadow-lg p-2">
             <div className="flex flex-wrap gap-2 p-2">
               {["1", "2", "3", "4", "5+"].map((room) => (
                 <button
@@ -189,7 +217,7 @@ const PropertySearchForm = () => {
       {/* Цена */}
       <div
         ref={priceRef}
-        className="relative flex-1 w-full border-r border-blue-200"
+        className="relative flex-1 w-full border-r border-blue-500"
       >
         <button
           type="button"
@@ -205,53 +233,66 @@ const PropertySearchForm = () => {
         </button>
 
         {showPriceDropdown && (
-          <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-blue-200 rounded-md shadow-lg p-4">
+          <div className="absolute z-50 left-0 right-0 mt-1 w-full bg-white border border-blue-500 rounded-md shadow-lg p-4">
             <div className="flex items-center space-x-2">
-              <div className="flex-1">
-                <label className="block text-sm text-gray-500 mb-1">от</label>
+              <div className="flex-1 relative input-wrapper">
+                <label htmlFor="priceFromDropdown" className="input-label">
+                  от
+                </label>
                 <input
-                  type="number"
-                  value={priceFrom}
-                  onChange={(e) => setPriceFrom(e.target.value)}
-                  placeholder="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  id="priceFromDropdown"
+                  type="text"
+                  inputMode="numeric"
+                  value={priceFrom ? formatNumberWithSpaces(priceFrom) : ""}
+                  onChange={(e) =>
+                    setPriceFrom(parseNumberWithSpaces(e.target.value))
+                  }
+                  className="w-full px-8 py-2 border border-blue-500 rounded-md focus:ring-blue-500 focus:border-blue-700"
                   onClick={(e) => e.stopPropagation()}
                 />
+                <span className="input-icon text-gray-400">₽</span>
               </div>
-              <div className="flex-1">
-                <label className="block text-sm text-gray-500 mb-1">до</label>
+              <div className="flex-1 relative input-wrapper">
+                <label htmlFor="priceToDropdown" className="input-label">
+                  до
+                </label>
                 <input
-                  type="number"
-                  value={priceTo}
-                  onChange={(e) => setPriceTo(e.target.value)}
-                  placeholder="∞"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  id="priceToDropdown"
+                  type="text"
+                  inputMode="numeric"
+                  value={priceTo ? formatNumberWithSpaces(priceTo) : ""}
+                  onChange={(e) =>
+                    setPriceTo(parseNumberWithSpaces(e.target.value))
+                  }
+                  className="w-full px-8 py-2 border border-blue-500 rounded-md focus:ring-blue-500 focus:border-blue-700"
                   onClick={(e) => e.stopPropagation()}
                 />
+                <span className="input-icon text-gray-400">₽</span>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* Местоположение */}
-      <div className="flex-1 w-full border-r border-blue-200">
+      {/* Местоположение + кнопка поиска */}
+      <div className="relative flex items-center bg-blue-500 overflow-hidden rounded-r-lg">
+        {/* Поле ввода местоположения */}
         <input
           type="text"
           placeholder="Город, ЖК, адрес, район"
-          className="w-full px-4 py-3 focus:outline-none"
+          className="flex-1 px-6 py-3 bg-white rounded-r-xl border border-blue-500 focus:outline-none focus:border-blue-700"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
         />
-      </div>
 
-      {/* Кнопка поиска */}
-      <button
-        type="submit"
-        className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      >
-        Поиск
-      </button>
+        {/* Кнопка поиска */}
+        <button
+          type="submit"
+          className="px-10 py-3 bg-blue-500 text-white font-medium transition-colors duration-200 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-r-lg"
+        >
+          Поиск
+        </button>
+      </div>
     </form>
   );
 };
