@@ -14,15 +14,25 @@ const SearchResultsPage = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const location = searchParams.get("location");
-  const propertyType = searchParams.get("propertyType");
-
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
-        const res = await fetch(
-          `/api/properties/search?location=${location}&propertyType=${propertyType}`
-        );
+        // Получаем все параметры поиска
+        const params = {
+          location: searchParams.get("location"),
+          propertyType: searchParams.get("propertyType"),
+          rooms: searchParams.get("rooms"),
+          priceFrom: searchParams.get("priceFrom"),
+          priceTo: searchParams.get("priceTo"),
+        };
+
+        // Формируем URL с параметрами
+        const queryString = Object.entries(params)
+          .filter(([_, value]) => value !== null)
+          .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+          .join("&");
+
+        const res = await fetch(`/api/properties/search?${queryString}`);
 
         if (res.status === 200) {
           const data = await res.json();
@@ -38,32 +48,33 @@ const SearchResultsPage = () => {
     };
 
     fetchSearchResults();
-  }, [location, propertyType]);
+  }, [searchParams]);
 
   return (
     <>
       <section className="bg-blue-700 py-4">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col items-start sm:px-6 lg:px-8">
+        <div className="container mx-auto px-4">
           <PropertySearchForm />
         </div>
       </section>
+
       {loading ? (
         <Spinner loading={loading} />
       ) : (
         <section className="px-4 py-6">
-          <div className="container-xl lg:container m-auto px-4 py-0 xl:py-6">
+          <div className="container-xl lg:container m-auto px-4 py-6">
             <Link
               href="/properties"
               className="flex items-center text-blue-500 hover:underline mb-3"
             >
               <FaArrowAltCircleLeft className="mr-2" /> Назад к недвижимости
             </Link>
-            <h1 className="text-3xl xl:text-4xl mb-6 text-center font-bold underline">
+            <h1 className="text-3xl font-bold mb-6 text-center">
               Результаты поиска
-              <FaMagnifyingGlassLocation className="ml-2 inline-block text-3xl xl:text-4xl pb-1 xl:pb-2" />
+              <FaMagnifyingGlassLocation className="ml-2 inline-block" />
             </h1>
             {properties.length === 0 ? (
-              <p>Ничего не найдено</p>
+              <p>По вашему запросу ничего не найдено</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {properties.map((property) => (
