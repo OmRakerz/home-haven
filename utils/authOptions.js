@@ -28,7 +28,7 @@ export const authOptions = {
           name: profile.real_name || profile.login,
           email: profile.default_email,
           image: profile.default_avatar_id
-            ? `https://avatars.yandex.net/get-yapic/ ${profile.default_avatar_id}/isq_l`
+            ? `https://avatars.yandex.net/get-yapic/${profile.default_avatar_id}/islands-200`
             : null,
           isGuest: false,
         };
