@@ -2,10 +2,11 @@
 import { useState, useEffect } from "react";
 import { signIn, getProviders, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { FaGoogle, FaGithub, FaUser } from "react-icons/fa";
+import { FaGoogle, FaGithub, FaUser, FaYandex } from "react-icons/fa";
 
 const icons = {
   google: <FaGoogle className="mr-2" />,
+  yandex: <FaYandex />,
   github: <FaGithub className="mr-2" />,
   guest: <FaUser className="mr-2" />,
 };
@@ -54,10 +55,11 @@ const LoginPage = () => {
               <button
                 key={index}
                 onClick={() => signIn(provider.id)}
-                className={`flex items-center justify-center
-                ${
+                className={`flex items-center justify-center ${
                   provider.id === "guest"
                     ? "bg-yellow-400 text-black hover:bg-yellow-500"
+                    : provider.id === "yandex"
+                    ? "bg-orange-500 text-white hover:bg-orange-600"
                     : "bg-gray-200 text-gray-800 hover:bg-gray-900 hover:text-white"
                 } rounded-md px-3 py-2 mb-4 w-full transition-colors duration-300 shadow-sm`}
               >
@@ -65,6 +67,8 @@ const LoginPage = () => {
                 <span className="ml-2">
                   {provider.id === "guest"
                     ? "Войти как гость"
+                    : provider.id === "yandex"
+                    ? "Войти через Яндекс"
                     : `Войти через ${provider.name}`}
                 </span>
               </button>

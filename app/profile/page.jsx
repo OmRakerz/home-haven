@@ -23,6 +23,10 @@ const ProfilePage = () => {
   const [sortOrder, setSortOrder] = useState("newest");
   const [showSort, setShowSort] = useState(false);
 
+  const avatarUrl = profileImage
+    ? profileImage.replace("isq_s", "isq_l")
+    : "/images/profile.png";
+
   // Состояние для пагинации
   const [page, setPage] = useState(1);
   const pageSize = 2; // Отображать по 2 объявления на странице
@@ -118,11 +122,11 @@ const ProfilePage = () => {
               <h1 className="text-3xl font-bold mb-4 underline">Ваш профиль</h1>
               <div className="mb-4">
                 <Image
-                  className="h-32 w-32 rounded-full mx-auto md:mx-0"
-                  src={profileImage || profileDefault}
+                  src={avatarUrl}
+                  alt={profileName || "User"}
                   width={200}
                   height={200}
-                  alt="User"
+                  className="h-32 w-32 rounded-full object-cover border-2 border-gray-300"
                 />
               </div>
               <h2 className="text-2xl mb-4">

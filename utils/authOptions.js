@@ -3,6 +3,7 @@ import User from "@/models/User";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
+import YandexProvider from "next-auth/providers/yandex";
 
 export const authOptions = {
   providers: [
@@ -17,10 +18,28 @@ export const authOptions = {
         },
       },
     }),
+
+    YandexProvider({
+      clientId: process.env.YANDEX_CLIENT_ID,
+      clientSecret: process.env.YANDEX_CLIENT_SECRET,
+      profile(profile) {
+        return {
+          id: profile.id,
+          name: profile.real_name || profile.login,
+          email: profile.default_email,
+          image: profile.default_avatar_id
+            ? `https://avatars.yandex.net/get-yapic/ ${profile.default_avatar_id}/isq_l`
+            : null,
+          isGuest: false,
+        };
+      },
+    }),
+
     GitHubProvider({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
     }),
+
     CredentialsProvider({
       name: "Guest",
       id: "guest",
@@ -39,6 +58,7 @@ export const authOptions = {
       },
     }),
   ],
+
   pages: {
     signIn: "/auth/signin",
   },

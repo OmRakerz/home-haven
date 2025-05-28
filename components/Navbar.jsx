@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -7,6 +8,7 @@ import logo from "@/assets/images/logo-white.png";
 import profileDefault from "@/assets/images/profile.png";
 import {
   FaGoogle,
+  FaYandex,
   FaGithub,
   FaUser,
   FaSignOutAlt,
@@ -17,6 +19,7 @@ import UnreadMessageCount from "./UnreadMessageCount";
 
 const icons = {
   google: <FaGoogle className="text-lg" />,
+  yandex: <FaYandex className="text-lg" />,
   github: <FaGithub className="text-lg" />,
   guest: <FaUser className="text-lg" />,
 };
@@ -118,27 +121,50 @@ const Navbar = () => {
             <div className="hidden md:block md:ml-6">
               <div className="flex items-center gap-2">
                 {providers &&
-                  Object.values(providers).map((provider, index) => (
-                    <button
-                      key={index}
-                      onClick={() => signIn(provider.id)}
-                      className={`flex items-center justify-center ${
-                        provider.id === "guest"
-                          ? "text-black bg-yellow-400 hover:bg-yellow-500"
-                          : "text-gray-800 bg-gray-200 hover:bg-gray-900 hover:text-white"
-                      } rounded-md p-2 group h-10 w-10 hover:w-auto transition-all duration-300 overflow-hidden`}
-                    >
-                      <span className="group-hover:animate-bounce">
-                        {icons[provider.id]}
-                      </span>
-                      <span className="ml-0 w-0 group-hover:ml-2 group-hover:w-auto opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap">
-                        {provider.id === "guest"
-                          ? "Гость"
-                          : provider.name === "Google"
-                          ? "Google"
-                          : "GitHub"}
-                      </span>
-                    </button>
+                  Object.values(providers).map((provider) => (
+                    <React.Fragment key={provider.id}>
+                      {/* Кнопка Google / GitHub / Guest */}
+                      {provider.id !== "yandex" && (
+                        <button
+                          onClick={() => signIn(provider.id)}
+                          className={`flex items-center justify-center ${
+                            provider.id === "guest"
+                              ? "text-black bg-yellow-400 hover:bg-yellow-500"
+                              : "text-gray-800 bg-gray-200 hover:bg-gray-900 hover:text-white"
+                          } rounded-md p-2 group h-10 w-10 hover:w-auto transition-all duration-300 overflow-hidden`}
+                        >
+                          <span className="group-hover:animate-bounce">
+                            {icons[provider.id]}
+                          </span>
+                          <span className="ml-0 w-0 group-hover:ml-2 group-hover:w-auto opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap">
+                            {provider.id === "guest"
+                              ? "Гость"
+                              : provider.name === "Google"
+                              ? "Google"
+                              : "GitHub"}
+                          </span>
+                        </button>
+                      )}
+
+                      {/* Кнопка Яндекс */}
+                      {provider.id === "yandex" && (
+                        <button
+                          onClick={() => signIn(provider.id)}
+                          className={`flex items-center justify-center ${
+                            provider.id === "yandex"
+                              ? "text-white bg-orange-500 hover:bg-orange-600"
+                              : "text-gray-800 bg-gray-200 hover:bg-gray-900 hover:text-white"
+                          } rounded-md p-2 group h-10 w-10 hover:w-auto transition-all duration-300 overflow-hidden`}
+                        >
+                          <span className="group-hover:animate-bounce">
+                            {icons[provider.id] || <FaYandex />}
+                          </span>
+                          <span className="ml-0 w-0 group-hover:ml-2 group-hover:w-auto opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap">
+                            {"Яндекс"}
+                          </span>
+                        </button>
+                      )}
+                    </React.Fragment>
                   ))}
               </div>
             </div>
@@ -188,63 +214,12 @@ const Navbar = () => {
                       className="h-8 w-8 rounded-full"
                       src={profileImage || profileDefault}
                       alt=""
-                      width={40}
-                      height={40}
+                      width={200}
+                      height={200}
                     />
                   </button>
                 </div>
 
-                {/* <!-- Раскрывающийся список профиля --> */}
-                {/* {isProfileMenuOpen && (
-                  <div
-                    id="user-menu"
-                    className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                    role="menu"
-                    aria-orientation="vertical"
-                    aria-labelledby="user-menu-button"
-                    tabIndex="-1"
-                  >
-                    <Link
-                      href="/profile"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700"
-                      role="menuitem"
-                      tabIndex="-1"
-                      id="user-menu-item-0"
-                      onClick={() => {
-                        setIsProfileMenuOpen(false);
-                      }}
-                    >
-                      <FaUser className="mr-2" />
-                      Профиль
-                    </Link>
-                    <Link
-                      href="/properties/saved"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700"
-                      role="menuitem"
-                      tabIndex="-1"
-                      id="user-menu-item-2"
-                      onClick={() => {
-                        setIsProfileMenuOpen(false);
-                      }}
-                    >
-                      <FaBookmark className="mr-2" />
-                      Закладки
-                    </Link>
-                    <button
-                      onClick={() => {
-                        setIsProfileMenuOpen(false);
-                        signOut();
-                      }}
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left"
-                      role="menuitem"
-                      tabIndex="-1"
-                      id="user-menu-item-2"
-                    >
-                      <FaSignOutAlt className="mr-2" />
-                      Выйти
-                    </button>
-                  </div>
-                )} */}
                 <div
                   className={`absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden transition-all duration-300 ${
                     isProfileMenuOpen
@@ -336,32 +311,54 @@ const Navbar = () => {
 
             {!session &&
               providers &&
-              Object.values(providers).map((provider, index) => (
-                <button
-                  onClick={() => {
-                    signIn(provider.id);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  key={index}
-                  className={`flex items-center ${
-                    provider.id === "guest"
-                      ? "text-black bg-yellow-400 hover:bg-yellow-500"
-                      : "text-white bg-gray-700 hover:bg-gray-900"
-                  } rounded-md px-3 py-2 w-full`}
-                >
-                  {provider.id === "google" ? (
-                    <FaGoogle className="mr-2" />
-                  ) : provider.id === "github" ? (
-                    <FaGithub className="mr-2" />
-                  ) : (
-                    <FaUser className="mr-2" />
+              Object.values(providers).map((provider) => (
+                <React.Fragment key={provider.id}>
+                  {/* Google / GitHub / Guest */}
+                  {provider.id !== "yandex" && (
+                    <button
+                      onClick={() => {
+                        signIn(provider.id);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`flex items-center ${
+                        provider.id === "guest"
+                          ? "text-black bg-yellow-400 hover:bg-yellow-500"
+                          : "text-white bg-gray-700 hover:bg-gray-900"
+                      } rounded-md px-3 py-2 w-full`}
+                    >
+                      {provider.id === "google" ? (
+                        <FaGoogle className="mr-2" />
+                      ) : provider.id === "github" ? (
+                        <FaGithub className="mr-2" />
+                      ) : (
+                        <FaUser className="mr-2" />
+                      )}
+                      <span>
+                        {provider.id === "guest"
+                          ? "Войти как гость"
+                          : `Войти через ${provider.name}`}
+                      </span>
+                    </button>
                   )}
-                  <span>
-                    {provider.id === "guest"
-                      ? "Войти как гость"
-                      : `Войти через ${provider.name}`}
-                  </span>
-                </button>
+
+                  {/* Yandex */}
+                  {provider.id === "yandex" && (
+                    <button
+                      onClick={() => {
+                        signIn(provider.id);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`flex items-center ${
+                        provider.id === "yandex"
+                          ? "text-white bg-orange-500 hover:bg-orange-600"
+                          : "text-white bg-gray-700 hover:bg-gray-900"
+                      } rounded-md px-3 py-2 w-full`}
+                    >
+                      <FaYandex className="mr-2" />
+                      <span>Войти через Яндекс</span>
+                    </button>
+                  )}
+                </React.Fragment>
               ))}
           </div>
         </div>
