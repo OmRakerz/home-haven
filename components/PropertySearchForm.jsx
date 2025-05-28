@@ -155,14 +155,41 @@ const PropertySearchForm = () => {
         {showTypesDropdown && (
           <div className="absolute z-50 left-0 right-0 mt-1 w-full bg-white border border-blue-500 rounded-md shadow-lg p-2 animate-fadeIn">
             {Object.entries(propertyTypeTranslations).map(([value, label]) => (
-              <div key={value} className="px-4 py-2 hover:bg-blue-50">
+              <div key={value} className="py-2 hover:bg-blue-50">
                 <label className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={propertyTypes.includes(value)}
-                    onChange={() => togglePropertyType(value)}
-                    className="rounded text-blue-600 focus:ring-blue-500"
-                  />
+                  <div className="relative flex-shrink-0">
+                    <input
+                      type="checkbox"
+                      checked={propertyTypes.includes(value)}
+                      onChange={() => togglePropertyType(value)}
+                      className="sr-only" // скрытый оригинальный чекбокс
+                    />
+                    {/* Кастомный чекбокс */}
+                    <div
+                      className={`h-5 w-5 rounded border-2 flex items-center justify-center transition-colors ${
+                        propertyTypes.includes(value)
+                          ? "bg-blue-600 border-blue-600"
+                          : "border-gray-300 hover:border-blue-400"
+                      }`}
+                    >
+                      {propertyTypes.includes(value) && (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-3 w-3 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
                   <span>{label}</span>
                 </label>
               </div>
