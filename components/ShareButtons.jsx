@@ -15,6 +15,24 @@ const ShareButtons = ({ property }) => {
     property.description || "Отличный вариант недвижимости"
   }`;
 
+  const handleRedditShare = () => {
+    const redditUrl = `https://www.reddit.com/submit?url=${encodeURIComponent(
+      shareUrl
+    )}&title=${encodeURIComponent(title)}`;
+
+    // Параметры окна (аналогично react-share)
+    const width = 600;
+    const height = 600;
+    const left = (window.innerWidth - width) / 2;
+    const top = (window.innerHeight - height) / 2;
+
+    window.open(
+      redditUrl,
+      "Поделиться в Reddit",
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    );
+  };
+
   // Функция для открытия Gmail
   const handleGmailShare = () => {
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(
@@ -45,9 +63,9 @@ const ShareButtons = ({ property }) => {
         </TelegramShareButton>
 
         {/* Reddit */}
-        <RedditShareButton url={shareUrl} title={title}>
+        <button onClick={handleRedditShare}>
           <RedditIcon size={40} round={true} />
-        </RedditShareButton>
+        </button>
 
         {/* Gmail */}
         <button
