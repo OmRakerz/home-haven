@@ -21,7 +21,7 @@ export const GET = async () => {
     // Найдем пользователя в БД
     const user = await User.findOne({ _id: userId });
 
-    // Получить закладки пользователей
+    // Получить закладки пользователя
     const bookmarks = await Property.find({ _id: { $in: user.bookmarks } });
 
     return new Response(JSON.stringify(bookmarks), { status: 200 });
@@ -31,6 +31,7 @@ export const GET = async () => {
   }
 };
 
+// POST /api/bookmarks
 export const POST = async (request) => {
   try {
     await connectDB();
@@ -48,42 +49,71 @@ export const POST = async (request) => {
     // Найдем пользователя в БД
     const user = await User.findOne({ _id: userId });
 
-    // Проверим добавлена ли недвижимость в закладки
+    // Получаем объект недвижимости
+    const property = await Property.findById(propertyId);
+
+    // Проверим, есть ли уже эта недвижимость в закладках
     let isBookmarked = user.bookmarks.includes(propertyId);
 
     let message;
 
     if (isBookmarked) {
-      // Если закладка уже была сделана, то удалим ее из закладок
+      // Удаляем закладку
       user.bookmarks.pull(propertyId);
       message = "Закладка удалена";
       isBookmarked = false;
     } else {
-      // Если нет закладок, то добавьте его в закладки
+      // Добавляем закладку
       user.bookmarks.push(propertyId);
       message = "Закладка добавлена";
       isBookmarked = true;
+    }
 
-      // Проверяем, достигло ли свойство 3+ закладок от разных пользователей
+    await user.save();
+
+    // После сохранения обновляем статус is_featured
+    if (isBookmarked === false) {
+      // Только что удалили закладку — проверяем общее число
+      const bookmarkCount = await User.countDocuments({
+        bookmarks: propertyId,
+      });
+
+      if (bookmarkCount < 3) {
+        await Property.updateOne(
+          { _id: propertyId },
+          { $set: { is_featured: false } }
+        );
+      }
+    } else if (isBookmarked) {
+      // Проверяем, достигло ли свойство 3+ закладок от разных пользователей (установлен ли is_featured у недвижимости)
       const bookmarkCount = await User.countDocuments({
         bookmarks: propertyId,
       });
 
       if (bookmarkCount >= 3) {
-        await Property.updateOne(
-          { _id: propertyId },
-          { $set: { is_featured: true } }
-        );
+        // Если количество закладок ≥ 3, делаем is_featured = true
+        if (!property.is_featured) {
+          await Property.updateOne(
+            { _id: propertyId },
+            { $set: { is_featured: true } }
+          );
+        }
+      } else {
+        // Если меньше 3 — убираем фичер, если он был
+        if (property.is_featured) {
+          await Property.updateOne(
+            { _id: propertyId },
+            { $set: { is_featured: false } }
+          );
+        }
       }
     }
-
-    await user.save();
 
     return new Response(JSON.stringify({ message, isBookmarked }), {
       status: 200,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Ошибка при работе с закладками:", error);
     return new Response("Что-то пошло не так", { status: 500 });
   }
 };
